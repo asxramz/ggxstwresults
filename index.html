@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Tournament Result Maker - Pro Edition</title>
+    
+    <!-- PWA Configuration -->
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Tournament Pro">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <!-- External Dependencies -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Background Particles -->
+    <div class="particles-bg">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <div class="app-container">
+        <!-- Navigation Bar -->
+        <nav class="navbar" id="navbar">
+            <div class="nav-brand">
+                <div class="brand-logo" id="brand-logo">
+                    <i class="fas fa-trophy" id="brand-icon"></i>
+                    <img id="brand-image" style="display: none;">
+                </div>
+                <span class="brand-text">GGXSTW Tournament</span>
+            </div>
+            <div class="nav-menu">
+                <button class="nav-item active" onclick="showPage('home')" data-page="home">
+                    <i class="fas fa-home"></i>
+                    <span class="nav-text">Home</span>
+                </button>
+                <button class="nav-item" onclick="showPage('add-result')" data-page="add-result">
+                    <i class="fas fa-plus"></i>
+                    <span class="nav-text">Add Result</span>
+                </button>
+                <button class="nav-item" onclick="showPage('results')" data-page="results">
+                    <i class="fas fa-chart-line"></i>
+                    <span class="nav-text">Results</span>
+                </button>
+                <button class="nav-item" onclick="showPage('settings')" data-page="settings">
+                    <i class="fas fa-cog"></i>
+                    <span class="nav-text">Settings</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Home Page -->
+            <div id="home-page" class="page active">
+                <div class="page-header">
+                    <div class="logo-section">
+                        <div class="logo-upload-container">
+                            <div class="main-logo" id="main-logo">
+                                <i class="fas fa-trophy" id="main-logo-icon"></i>
+                                <img id="main-logo-image" style="display: none;">
+                            </div>
+                            <input type="file" id="logo-input" accept="image/*" onchange="uploadLogo(this)">
+                            <div class="upload-hint">
+                                <i class="fas fa-camera"></i>
+                                <span>Click to customize logo</span>
+                            </div>
+                        </div>
+                    </div>
+                    <h1 class="page-title">GGXSTW Tournament</h1>
+                    <p class="page-subtitle">Elite Gaming Championship Results</p>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="dashboard-card primary" onclick="showPage('add-result')">
+                        <div class="card-icon">
+                            <i class="fas fa-plus-circle"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Add Match Result</h3>
+                            <p>Record new team performance</p>
+                        </div>
+                        <div class="card-arrow">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card secondary" onclick="showPage('results')">
+                        <div class="card-icon">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>View Leaderboard</h3>
+                            <p>Tournament standings & stats</p>
+                        </div>
+                        <div class="card-arrow">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card tertiary" onclick="showPage('settings')">
+                        <div class="card-icon">
+                            <i class="fas fa-sliders-h"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Tournament Settings</h3>
+                            <p>Configure scoring system</p>
+                        </div>
+                        <div class="card-arrow">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stats-overview">
+                    <h3 class="section-title">Current Tournament Stats</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-content">
+                                <span class="stat-value" id="total-teams">0</span>
+                                <span class="stat-label">Teams</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-crosshairs"></i>
+                            </div>
+                            <div class="stat-content">
+                                <span class="stat-value" id="kill-points-display">2</span>
+                                <span class="stat-label">Points/Kill</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-trophy"></i>
+                            </div>
+                            <div class="stat-content">
+                                <span class="stat-value" id="total-matches">0</span>
+                                <span class="stat-label">Matches</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Result Page -->
+            <div id="add-result-page" class="page">
+                <div class="page-header">
+                    <button class="back-btn" onclick="showPage('home')">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>Back to Home</span>
+                    </button>
+                    <h1 class="page-title">Add Match Result</h1>
+                    <p class="page-subtitle">Record team performance data</p>
+                </div>
+
+                <div class="form-container">
+                    <div class="input-group">
+                        <label class="input-label">
+                            <i class="fas fa-users"></i>
+                            Team Name
+                        </label>
+                        <input type="text" class="form-input" id="team-name" placeholder="Enter team name">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="input-group">
+                            <label class="input-label">
+                                <i class="fas fa-crosshairs"></i>
+                                Kills
+                            </label>
+                            <input type="number" class="form-input" id="kills" placeholder="0" min="0">
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">
+                                <i class="fas fa-crown"></i>
+                                Booyah Count
+                            </label>
+                            <input type="number" class="form-input" id="booyah-count" placeholder="0" min="0">
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">
+                            <i class="fas fa-medal"></i>
+                            Placement Points
+                        </label>
+                        <input type="number" class="form-input" id="placement-points" placeholder="0" min="0">
+                    </div>
+
+                    <button class="submit-btn" onclick="addTeam()">
+                        <i class="fas fa-save"></i>
+                        <span>Save Result</span>
+                    </button>
+                </div>
+
+                <div class="points-preview" id="points-preview" style="display: none;">
+                    <h3>Points Calculation</h3>
+                    <div class="calculation-breakdown">
+                        <div class="calc-row">
+                            <span>Kill Points:</span>
+                            <span id="calc-kill-points">0</span>
+                        </div>
+                        <div class="calc-row">
+                            <span>Booyah Bonus:</span>
+                            <span id="calc-booyah-points">0</span>
+                        </div>
+                        <div class="calc-row">
+                            <span>Placement Points:</span>
+                            <span id="calc-placement-points">0</span>
+                        </div>
+                        <div class="calc-total">
+                            <span>Total Points:</span>
+                            <span id="calc-total-points">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Page -->
+            <div id="results-page" class="page">
+                <div class="page-header">
+                    <button class="back-btn" onclick="showPage('home')">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>Back to Home</span>
+                    </button>
+                    <div class="results-header-content">
+                        <div class="tournament-logos">
+                            <div class="tournament-logo left" id="results-logo-left" style="display: none;">
+                                <i class="fas fa-trophy" id="results-icon-left"></i>
+                                <img id="results-image-left" style="display: none;">
+                            </div>
+                            <div class="tournament-title">
+                                <h1 id="tournament-display-name">TOURNAMENT</h1>
+                                <h1>LEADERBOARD</h1>
+                            </div>
+                            <div class="tournament-logo right" id="results-logo-right" style="display: none;">
+                                <i class="fas fa-trophy" id="results-icon-right"></i>
+                                <img id="results-image-right" style="display: none;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="leaderboard-container">
+                    <div class="leaderboard-header">
+                        <div class="header-cell rank">RANK</div>
+                        <div class="header-cell team">TEAM</div>
+                        <div class="header-cell kills">KILLS</div>
+                        <div class="header-cell booyah">
+                            <div class="booyah-logo-large" id="booyah-header-logo">
+                                <i class="fas fa-crown" id="booyah-header-icon"></i>
+                                <img id="booyah-header-image" style="display: none;">
+                            </div>
+                        </div>
+                        <div class="header-cell placement">PLACEMENT POINTS</div>
+                        <div class="header-cell total">TOTAL</div>
+                    </div>
+                    <div class="leaderboard-content" id="leaderboard-content">
+                        <!-- Leaderboard content will be dynamically generated -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Page -->
+            <div id="settings-page" class="page">
+                <div class="page-header">
+                    <button class="back-btn" onclick="showPage('home')">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>Back to Home</span>
+                    </button>
+                    <h1 class="page-title">Tournament Settings</h1>
+                    <p class="page-subtitle">Configure scoring system and display options</p>
+                </div>
+
+                <div class="settings-container">
+                    <!-- Scoring Settings -->
+                    <div class="settings-section">
+                        <h3 class="settings-section-title">
+                            <i class="fas fa-calculator"></i>
+                            Scoring Configuration
+                        </h3>
+                        <div class="settings-grid">
+                            <div class="setting-item">
+                                <label class="setting-label">
+                                    <i class="fas fa-crosshairs"></i>
+                                    Points per Kill
+                                </label>
+                                <input type="number" class="setting-input" id="kill-points-setting" min="1" max="10" value="2">
+                            </div>
+                            <div class="setting-item">
+                                <label class="setting-label">
+                                    <i class="fas fa-trophy"></i>
+                                    Tournament Name
+                                </label>
+                                <input type="text" class="setting-input" id="tournament-name-setting" placeholder="Tournament Name" maxlength="20">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Logo Settings -->
+                    <div class="settings-section">
+                        <h3 class="settings-section-title">
+                            <i class="fas fa-image"></i>
+                            Logo Configuration
+                        </h3>
+                        <div class="logo-settings-grid">
+                            <div class="logo-setting-card">
+                                <div class="logo-preview" id="settings-main-logo">
+                                    <i class="fas fa-trophy" id="settings-logo-icon"></i>
+                                    <img id="settings-logo-image" style="display: none;">
+                                </div>
+                                <div class="logo-setting-content">
+                                    <h4>Tournament Logo</h4>
+                                    <p>Upload your tournament logo</p>
+                                    <div class="logo-buttons">
+                                        <button class="default-logo-btn" onclick="useDefaultTournamentLogo()">
+                                            <i class="fas fa-image"></i>
+                                            Use GG Esports Logo
+                                        </button>
+                                        <input type="file" class="logo-file-input" id="settings-logo-input" accept="image/*" onchange="uploadLogo(this)">
+                                        <label for="settings-logo-input" class="logo-upload-btn">
+                                            <i class="fas fa-upload"></i>
+                                            Choose File
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="logo-setting-card">
+                                <div class="logo-preview booyah-preview" id="settings-booyah-logo">
+                                    <i class="fas fa-crown" id="settings-booyah-icon"></i>
+                                    <img id="settings-booyah-image" style="display: none;">
+                                </div>
+                                <div class="logo-setting-content">
+                                    <h4>Booyah Logo</h4>
+                                    <p>Upload custom booyah icon</p>
+                                    <div class="logo-buttons">
+                                        <button class="default-logo-btn" onclick="useDefaultBooyahLogo()">
+                                            <i class="fas fa-star"></i>
+                                            Use Booyah Logo
+                                        </button>
+                                        <input type="file" class="logo-file-input" id="settings-booyah-input" accept="image/*" onchange="uploadBooyahLogo(this)">
+                                        <label for="settings-booyah-input" class="logo-upload-btn">
+                                            <i class="fas fa-upload"></i>
+                                            Choose File
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Display Settings -->
+                    <div class="settings-section">
+                        <h3 class="settings-section-title">
+                            <i class="fas fa-desktop"></i>
+                            Display Options
+                        </h3>
+                        <div class="display-settings">
+                            <div class="setting-item">
+                                <label class="setting-label">
+                                    <i class="fas fa-eye"></i>
+                                    Logo Display on Results Page
+                                </label>
+                                <div class="radio-group">
+                                    <label class="radio-item">
+                                        <input type="radio" name="logo-display" value="both" id="logo-display-both" checked>
+                                        <span class="radio-custom"></span>
+                                        <span class="radio-text">Both Sides</span>
+                                    </label>
+                                    <label class="radio-item">
+                                        <input type="radio" name="logo-display" value="left" id="logo-display-left">
+                                        <span class="radio-custom"></span>
+                                        <span class="radio-text">Left Only</span>
+                                    </label>
+                                    <label class="radio-item">
+                                        <input type="radio" name="logo-display" value="right" id="logo-display-right">
+                                        <span class="radio-custom"></span>
+                                        <span class="radio-text">Right Only</span>
+                                    </label>
+                                    <label class="radio-item">
+                                        <input type="radio" name="logo-display" value="none" id="logo-display-none">
+                                        <span class="radio-custom"></span>
+                                        <span class="radio-text">Hide Logos</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Data Management -->
+                    <div class="settings-section">
+                        <h3 class="settings-section-title">
+                            <i class="fas fa-database"></i>
+                            Data Management
+                        </h3>
+                        <div class="data-actions">
+                            <button class="action-btn export-btn" onclick="exportData()">
+                                <i class="fas fa-download"></i>
+                                Export Data
+                            </button>
+                            <button class="action-btn import-btn" onclick="document.getElementById('import-input').click()">
+                                <i class="fas fa-upload"></i>
+                                Import Data
+                            </button>
+                            <button class="action-btn reset-btn" onclick="resetAllData()">
+                                <i class="fas fa-trash"></i>
+                                Reset All Data
+                            </button>
+                            <input type="file" id="import-input" accept=".json" style="display: none;" onchange="importData(this)">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmation-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Confirm Action</h3>
+            </div>
+            <div class="modal-body">
+                <p id="modal-message">Are you sure you want to proceed?</p>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn cancel-btn" onclick="closeModal()">Cancel</button>
+                <button class="modal-btn confirm-btn" id="modal-confirm-btn">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
